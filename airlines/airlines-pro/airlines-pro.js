@@ -24,131 +24,154 @@ let flights = [
 
     { id: 09, to: 'Sydney', from: 'Barcelona', cost: 150, scale: true },
 
-    { id: 10, to: 'Tel-Aviv', from: 'Madrid', cost: 150, scale: false } ];
+    { id: 10, to: 'Tel-Aviv', from: 'Madrid', cost: 150, scale: false }];
 
-    
-    let numFlightsCount = flights.length;
 
-    function mainFlights () {
-        userInput();
-        allFlights();
-        meanPrice();
-        lastFlights();
-        interface();
-        
+let numFlightsCount = flights.length;
+
+function mainFlightsPro () {
+    userInput();
+    allFlights(flights);
+    meanPrice();
+    lastFlights();
+    interface();
+
+}
+
+// Great user 
+function userInput() {
+    let user = prompt("User name: "); // Prompt user name
+    alert(`Hello, ${user}.`) // Say Hello
+}
+
+// Print object array with flights
+function allFlights(flightsArray) { // Takes an array as input
+    console.log("Available flights: ") // Print all flights with origin, destination, price and scales
+    for (let i = 0; i < flightsArray.length; i++) {
+        console.log(`From: ${flightsArray[i].from} To: ${flightsArray[i].to} 
+        ${flightsArray[i].cost}€ ${check(i)}. Flight ID: ${flightsArray[i].id}`)
+    }
+    console.log("\n");
+
+
+}
+
+// Average price function
+function meanPrice() { // Calculate mean price
+    let meanPrice = Number.parseInt(flights[0].cost);
+    let n = 1; // Counter for the number of flights
+    for (let i = 1; i < flights.length; i++) { // Sum up all flights
+        meanPrice += Number.parseInt(flights[i].cost);
+        n++;
+    }
+    meanPrice = (meanPrice / n).toFixed(2); // Calculate mean.
+    console.log(`Mean price: ${meanPrice}€`)
+    console.log("\n");
+
+}
+
+
+// Las five flights function
+function lastFlights() {
+    console.log("The last five flights of today go to:")
+    for (let i = flights.length - 1; i >= (flights.length - 5); i--) { // Itinerate trough the las 5 flights.
+        console.log(flights[i].to);
+    }
+}
+
+// Check if the flight has scales function
+function check(i) { // Check type of flight.
+    if (flights[i].scale) { // If scale ===, return flight as Direct
+        return "Direct"
+
+    } else {
+        return "Scale"; // Return flight as Scale.
+    }
+}
+
+// Interface wich distinguishes between ADMIN and USER
+function interface() {
+    let userType = prompt("Type of user: ").toLocaleUpperCase(); // Prompt user type, make case insensitive
+    if (userType === "ADMIN") { // If admin, run administration options
+        adminInterface()
+    } else if (userType === "USER") { // If user, run user options
+        userInterface()
+    } else {
+        alert("Wrogn user type, specify ADMIN/USER")
+        interface(); // IF no valid user type is introduced, rerun
+    }
+
+}
+
+// Add and delete options for ADMIN  func
+function adminInterface() {
+    if (window.confirm("Do you want to add a new flight to the databse?")) {
+        newFlight()
+    }
+    if (window.confirm("Do tou want to delete any flight?")) {
+        deleteFlight();
+    } else {
+        return;
     }
 
 
-    function userInput () {
-        let user = prompt("User name: "); // Prompt user name
-        alert(`Hello, ${user}.`) // Say Hello
-    }
+}
 
-    function allFlights () {
-        console.log("Available flights: ") // Print all flights with origin, destination, price and scales
-        for (let i = 0; i < flights.length; i++){ 
-            console.log(`From: ${flights[i].from} To: ${flights[i].to} ${flights[i].cost}€ ${check(i)}`)
-        }
-        console.log("\n");
-
-
-    }
-
-    function meanPrice () { // Calculate mean price
-        let meanPrice = Number.parseInt(flights[0].cost);
-        let n = 1; // Counter for the number of flights
-        for (let i = 1; i < flights.length; i++){ // Sum up all flights
-            meanPrice += Number.parseInt(flights[i].cost);
-            n++;
-        } 
-        meanPrice = (meanPrice / n).toFixed(2); // Calculate mean.
-        console.log(`Mean price: ${meanPrice}€`)
-        console.log("\n");
-
-    }
-    
-  
-    function lastFlights () {
-        console.log("The last five flights of today go to:")
-        for (let i = flights.length -1; i >= (flights.length -5); i--){ // Itinerate trough the las 5 flights.
-            console.log(flights[i].to);
-        }
-    }
-
-    function check (i) { // Check type of flight.
-        if (flights[i].scale){ // If scale ===, return flight as Direct
-            return "Direct"
-
-        } else {
-            return "Scale"; // Return flight as Scale.
-        } 
-    }
-
-  function interface () {
-      let userType = prompt("Type of user: ").toLocaleUpperCase();
-      if (userType === "ADMIN") {
-          adminInterface ()
-      } else if (userType.toLocaleUpperCase === "USER") {
-          userInterface ()
-      }
-      
-  }
-
-  function adminInterface () {
-      if (window.confirm("Do you want to add a new flight to the databse?")) {
-          newFlight ()
-      } debugger;
-      if (window.confirm("Do tou want to delete any flight?")) {
-          deleteFlight ();
-      } else {
-          return;
-      }
-
-
-  }
-
-  function newFlight () {
-    let origin = window.prompt("From: ");
-    let destination = window.prompt("To: ")
-    let price = window.prompt("For: ")
-    let haveScales = prompt("Does the flight have scales?")
-    addFlight (origin, destination, price, haveScales)
-    if (window.confirm("Do you want to add another flight?")){
+function newFlight() {
+    addFlight(askDataFlight())
+    if (window.confirm("Do you want to add another flight?")) {
         newFlight();
     } else {
         return;
     }
 
-  }
-
-  function addFlight (origin, destination, price, haveScales) {
-      if (checkSpace())
-      {alert("To many flights")
-      return;
-    } else {
-        flights.push({id: numFlightsCount, to: destination, from: origin, cost: price, scale: haveScales });
-        numFlightsCount ++;
-    }
-  }
-
-  function deleteFlight () {
-      let idDelete = window.prompt("ID of uf the flight to be deleted: ");
-      if (flights.id(idDelete)) {
-          delete flights.id[idDelete];
-          alert(`Flight with ID ${idDelete} was deleted`);
-      } else {
-          alert(`No flight with ID ${idDelete} was found`)
-      }
-      if (window.confirm("Do you want to delete another flight?")) {
-          deleteFlight ()
-      } else {
-          return;
-      }
-      
-      
-  }
-
-  function checkSpace () {
-      return numFlightsCount >= numFlightsCount + 15
 }
+
+function askDataFlight () {
+    let flight = 
+    {origin: window.prompt("From: "), 
+    destination: window.prompt("To: "), 
+    price: window.prompt("Price: "),
+    haveScale: window.confirm("Does the flight have scales?")};
+    return flight;
+}
+
+
+function addFlight(flight) {
+    if (numFlightsCount >= numFlightsCount + 15) {
+        alert("To many flights")
+        return false;
+    } else {
+        flights.push(flight);
+        numFlightsCount++;
+        return true;
+    }
+}
+
+
+function deleteFlight() {
+    let idDelete = parseInt(window.prompt("ID of uf the flight to be deleted: "));
+    flights = flights.filter(function (temp) { return temp.id != idDelete; });
+    numFlightsCount--;
+    if (window.confirm("Do you wanna delet another flight?")) {
+        deleteFlight();
+    } else {
+        return;
+    }
+}
+
+
+function userInterface() {
+    let maximun = window.prompt("Maximun price: ");
+    let minimun = window.prompt("Minimum price: ");
+    let flightsMach = flights.filter(function (temp) { return temp.cost < maximun })
+    flightsMach = flightsMach.filter(function (temp) { return temp.cost >= minimun })
+    allFlights(flightsMach);
+    let buyFlight = window.prompt("Select flight ID you want to buy: ")
+    window.alert("Gracias por su compra, vuelva pronto.")
+
+}
+
+
+
 
