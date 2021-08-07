@@ -26,137 +26,145 @@ let flights = [
 
     { id: 10, to: 'Tel-Aviv', from: 'Madrid', cost: 150, scale: false }];
 
-function mainFlightsPro() {
+// Global variable. User type.
+
+// Function. MAIN.
+mainFlightsPro = flightsArray => {
     greateUser();
-    allFlights(flights);
-    meanPrice(flights);
-    lastFlights(flights);
-    interface();
-}
-
-// Greate user function
-greateUser2 = () => alert(`Hello, ${prompt("User name: ")}.`);
-
-//
-allFlights = flightsArray => {
+    allFlights(flightsArray);
+    meanPrice(flightsArray);
+    lastFlights(flightsArray);
+    interfaceOptions(flightsArray);
+  }
+  
+  // Function. Greate user
+  greateUser = () => alert(`Hello, ${prompt("User name: ")}.`);
+  
+  // Function. Print all available flights
+  allFlights = flightsArray => console.log(flightsArray);
+  
+  // Function. Mean price of flights
+  meanPrice = flightsArray => {
+    let totalSum = 0;
     for (let i = 0; i < flightsArray.length; i++) {
-        console.log(flights[i]);
+      totalSum += flightsArray[i].cost;
     }
-}
-
-// Print object array with flights
-function allFlights(flightsArray) { // Takes an array as input
-    console.log("Available flights: ") // Print all flights with origin, destination, price and scales
-    for (let i = 0; i < flightsArray.length; i++) {
-        console.log(`From: ${flightsArray[i].from} To: ${flightsArray[i].to} 
-        ${flightsArray[i].cost}€ ${check(i)}. Flight ID: ${flightsArray[i].id}`)
+    console.log(`Mean price: ${(totalSum / flightsArray.length).toFixed(2)}€`);
+  }
+  
+  // Function. Last five flights
+  lastFlights = flightsArray => {
+    console.log("The last five flights of today go to:");
+    for (let i = flightsArray.length - 1; i >= (flightsArray.length - 5); i--) {
+      console.log(flightsArray[i].to);
     }
-    console.log("\n");
-}
-
-// Average price function
-function meanPrice(flightsArray) { // Calculate mean price
-    let meanPrice = { totalSum: 0, n: 0 }
-    for (let i = 0; i < flightsArray.length; i++) { // Sum up all flights
-        meanPrice.totalSum += Number.parseInt(flightsArray[i].cost);
-        meanPrice.n++;
-    }
-    console.log(`Mean price: ${(meanPrice.totalSum / meanPrice.n).toFixed(2)}€`)
-    console.log("\n");
-}
-
-// Las five flights function
-function lastFlights(flightsArray) {
-    console.log("The last five flights of today go to:")
-    for (let i = flightsArray.length - 1; i >= (flightsArray.length - 5); i--) { // Itinerate trough the las 5 flights.
-        console.log(flightsArray[i].to);
-    }
-}
-
-// Check if the flight has scales function
-function check(i) { // Check type of flight.
-    if (flights[i].scale) { // If scale ===, return flight as Direct
-        return "Direct"
-
+  }
+  
+  // Function. User type rompt
+  userType = () => {
+    let user = window.prompt("Type of user: ").toLocaleUpperCase();
+    if (user !== "ADMIN" && user !== "USER" && user !== null) {
+      userType();
     } else {
-        return "Scale"; // Return flight as Scale.
+      return user;
     }
-}
-
-// Interface wich distinguishes between ADMIN and USER
-function interface() {
-    let userType = prompt("Type of user: ").toLocaleUpperCase(); // Prompt user type, make case insensitive
-    if (userType === "ADMIN") { // If admin, run administration options
-        adminInterface()
-    } else if (userType === "USER") { // If user, run user options
-        userInterface()
+  }
+  
+  // Function. Stablishes path for user or admin
+  interfaceOptions = flightsArray => {
+    if (userType() === "ADMIN") {
+      adminInterface(flightsArray);
     } else {
-        alert("Wrogn user type, specify ADMIN/USER")
-        interface(); // IF no valid user type is introduced, rerun
+      userInterface(flightsArray);
     }
-}
-
-// Add and delete options for ADMIN  function
-function adminInterface() {
-    askAction(newFlight, "add");
-    askAction(deleteFlight, "delete");
-    return;
-}
-
-// New flight function
-function newFlight() {
-    addFlight(askDataFlight()) // Function asking for info of new flight, nested in function that pushes the new data flights array
-    repeateAction(newFlight, "add");
-}
-
-// Asking about data of the new flight Fuction
-function askDataFlight() {
+  }
+  
+  // Function. Admin inteface options
+  actionType = () => {
+    let action = window.prompt("DELETE or ADD flight: ").toLocaleUpperCase();
+    if (action !== "ADD" && action !== "DELETE") {
+      actionType();
+    } else if (action === null) {
+      return false;
+    } else {
+      return action;
+    }
+  }
+  // Function. Stablish path to add, delete or finish
+  adminInterface = flightsArray => {
+    if (actionType() === "ADD") {
+      newFlight(flightsArray)
+    } else {
+      deleteFlight(flightsArray)
+    }
+  
+  }
+  
+  // Function. Ads new flight. Three nested functions -> Ask for data -> Push data -> Ask for other operations
+  newFlight = (flightsArray) => adminInterface(pushFlight(flightsArray));
+  
+  // Function. Asks for data of new flight
+  askData = (flightsArray) => {
     let flight = {
-        origin: window.prompt("From: "), destination: window.prompt("To: "),
-        price: window.prompt("Price: "), haveScale: window.confirm("Does the flight have scales?")
+      id: flightsArray.length,
+      to: window.prompt("To: "),
+      from: window.prompt("From: "),
+      cost: window.prompt("Price: "),
+      scale: window.confirm("Scales: ")
     };
     return flight;
-}
-
-// Chechs if there is space for the new flight and pushes it in the array function
-function addFlight(flight) {
-    if (flights.length >= 24) { // Check not exceding the max numbers of flights
-        alert("To many flights")
-        return false; // IF to many flights return false
+  }
+  
+  // Function. Checks if there is sapce and pushes the flight into the array
+  pushFlight = flightsArray => {
+    if (flightsArray.length > 26) {
+      alert("No space");
+      return false;
     } else {
-        flights.push(flight); // Oush the flight into the arrray
-        return true; // Return true if flight was succsefully added
+      flightsArray.push(askData(flightsArray));
     }
+    return flightsArray;
+  }
+  
+  // Function. Delete flight. Two nested functions => ask which flight to delete and Delete -> Ask for other operations
+  deleteFlight = (flightsArray) => adminInterface(askRemove(flightsArray))
+  
+  // Function. Overrrides original flights array with a new array that filteres out the selected ID
+  askRemove = (flightsArray) => {
+    allFlights(flightsArray);
+    let idDelete = parseInt(window.prompt("Delete ID:"));
+    if (idDelete in flightsArray) {
+      flights = flightsArray.filter(function (filterFunction) { return filterFunction.id != idDelete; })
+      return flightsArray;
+    } else {
+      alert("Flight not found")
+      return flightsArray;
+      }
 }
 
-// Delete flights function
-function deleteFlight() {
-    let idDelete = parseInt(window.prompt("ID of uf the flight to be deleted: ")); // ASks for the ID of the flight that sould be deleted
-    flights = flights.filter(function (temp) { return temp.id != idDelete; }); // Overrride the flghts array with a new array that filters out the flight defined above
-    repeateAction(deleteFlight, "delete")
-}
-
-function userInterface() {
-    let limits = { maximum: window.prompt("Maximun price: "), minimun: window.prompt("Minimum price: ") };
-    let flightsMach = flights.filter(function (temp) { return temp.cost < limits.maximun })
-    flightsMach = flightsMach.filter(function (temp) { return temp.cost >= limits.minimun })
+  // Function. User options
+  userInterface = (flightsArray) => {
+    let maxPrice = window.prompt("Max price: ");
+    let minPrice = window.prompt("Min price: ");
+    let flightsMach = flightsArray.filter(function(maxLimit) {
+      return maxLimit.cost < maxPrice; 
+    });
+    flightsMach = flightsMach.filter(function(minLimit) {
+      return minLimit.cost >= minPrice;
+    });
+    return buyFlight(flightsMach);
+  }
+  
+  // Function. Print and buy flight
+  buyFlight = flightsMach => { debugger;
     allFlights(flightsMach);
-    let buyFlight = window.prompt("Select flight ID you want to buy: ")
-    window.alert("Gracias por su compra, vuelva pronto.")
-}
-
-function askAction(action, name) {
-    if (window.confirm(`Do you want to ${name} any flight`)) {
-        action();
+    let idBuy = parseInt(window.prompt("ID of flight you wanna buy: "));
+    if (idBuy in flightsMach) { // PROBLEM HERE
+      window.alert("Thanks for buying");
     } else {
-        return;
+      window.alert("Incorrect flight ID");
+      buyFlight();
     }
-}
-
-function repeateAction(repeatedAction, repeatedName) {
-    if (window.confirm(`Do you want to ${repeatedName} another flight`)) {
-        return repeatedAction();
-    } else {
-        return false;
-    }
-}
+  }
+  
+  mainFlightsPro(flights);

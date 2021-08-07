@@ -26,22 +26,22 @@ let flights = [
 
     { id: 10, to: 'Tel-Aviv', from: 'Madrid', cost: 150, scale: false }];
 
-
-let numFlightsCount = flights.length;
-
-function mainFlightsPro () {
-    userInput();
+function mainFlightsPro() {
+    greateUser();
     allFlights(flights);
-    meanPrice();
-    lastFlights();
+    meanPrice(flights);
+    lastFlights(flights);
     interface();
-
 }
 
-// Great user 
-function userInput() {
-    let user = prompt("User name: "); // Prompt user name
-    alert(`Hello, ${user}.`) // Say Hello
+// Greate user function
+greateUser2 = () => alert(`Hello, ${prompt("User name: ")}.`);
+
+//
+allFlights = flightsArray => {
+    for (let i = 0; i < flightsArray.length; i++) {
+        console.log(flights[i])
+    }
 }
 
 // Print object array with flights
@@ -52,30 +52,24 @@ function allFlights(flightsArray) { // Takes an array as input
         ${flightsArray[i].cost}€ ${check(i)}. Flight ID: ${flightsArray[i].id}`)
     }
     console.log("\n");
-
-
 }
 
 // Average price function
-function meanPrice() { // Calculate mean price
-    let meanPrice = Number.parseInt(flights[0].cost);
-    let n = 1; // Counter for the number of flights
-    for (let i = 1; i < flights.length; i++) { // Sum up all flights
-        meanPrice += Number.parseInt(flights[i].cost);
-        n++;
+function meanPrice(flightsArray) { // Calculate mean price
+    let meanPrice = { totalSum: 0, n: 0 }
+    for (let i = 0; i < flightsArray.length; i++) { // Sum up all flights
+        meanPrice.totalSum += Number.parseInt(flightsArray[i].cost);
+        meanPrice.n++;
     }
-    meanPrice = (meanPrice / n).toFixed(2); // Calculate mean.
-    console.log(`Mean price: ${meanPrice}€`)
+    console.log(`Mean price: ${(meanPrice.totalSum / meanPrice.n).toFixed(2)}€`)
     console.log("\n");
-
 }
 
-
 // Las five flights function
-function lastFlights() {
+function lastFlights(flightsArray) {
     console.log("The last five flights of today go to:")
-    for (let i = flights.length - 1; i >= (flights.length - 5); i--) { // Itinerate trough the las 5 flights.
-        console.log(flights[i].to);
+    for (let i = flightsArray.length - 1; i >= (flightsArray.length - 5); i--) { // Itinerate trough the las 5 flights.
+        console.log(flightsArray[i].to);
     }
 }
 
@@ -100,78 +94,69 @@ function interface() {
         alert("Wrogn user type, specify ADMIN/USER")
         interface(); // IF no valid user type is introduced, rerun
     }
-
 }
 
-// Add and delete options for ADMIN  func
+// Add and delete options for ADMIN  function
 function adminInterface() {
-    if (window.confirm("Do you want to add a new flight to the databse?")) {
-        newFlight()
-    }
-    if (window.confirm("Do tou want to delete any flight?")) {
-        deleteFlight();
-    } else {
-        return;
-    }
-
-
+    askAction(newFlight, "add");
+    askAction(deleteFlight, "delete");
+    return;
 }
 
+// New flight function
 function newFlight() {
-    addFlight(askDataFlight())
-    if (window.confirm("Do you want to add another flight?")) {
-        newFlight();
-    } else {
-        return;
-    }
-
+    addFlight(askDataFlight()) // Function asking for info of new flight, nested in function that pushes the new data flights array
+    repeateAction(newFlight, "add");
 }
 
-function askDataFlight () {
-    let flight = 
-    {origin: window.prompt("From: "), 
-    destination: window.prompt("To: "), 
-    price: window.prompt("Price: "),
-    haveScale: window.confirm("Does the flight have scales?")};
+// Asking about data of the new flight Fuction
+function askDataFlight() {
+    let flight = {
+        origin: window.prompt("From: "), destination: window.prompt("To: "),
+        price: window.prompt("Price: "), haveScale: window.confirm("Does the flight have scales?")
+    };
     return flight;
 }
 
-
+// Chechs if there is space for the new flight and pushes it in the array function
 function addFlight(flight) {
-    if (numFlightsCount >= numFlightsCount + 15) {
+    if (flights.length >= 24) { // Check not exceding the max numbers of flights
         alert("To many flights")
-        return false;
+        return false; // IF to many flights return false
     } else {
-        flights.push(flight);
-        numFlightsCount++;
-        return true;
+        flights.push(flight); // Oush the flight into the arrray
+        return true; // Return true if flight was succsefully added
     }
 }
 
-
+// Delete flights function
 function deleteFlight() {
-    let idDelete = parseInt(window.prompt("ID of uf the flight to be deleted: "));
-    flights = flights.filter(function (temp) { return temp.id != idDelete; });
-    numFlightsCount--;
-    if (window.confirm("Do you wanna delet another flight?")) {
-        deleteFlight();
+    let idDelete = parseInt(window.prompt("ID of uf the flight to be deleted: ")); // ASks for the ID of the flight that sould be deleted
+    flights = flights.filter(function (temp) { return temp.id != idDelete; }); // Overrride the flghts array with a new array that filters out the flight defined above
+    repeateAction(deleteFlight, "delete")
+}
+
+function userInterface() {
+    let limits = { maximum: window.prompt("Maximun price: "), minimun: window.prompt("Minimum price: ") };
+    let flightsMach = flights.filter(function (temp) { return temp.cost < limits.maximun })
+    flightsMach = flightsMach.filter(function (temp) { return temp.cost >= limits.minimun })
+    allFlights(flightsMach);
+    let buyFlight = window.prompt("Select flight ID you want to buy: ")
+    window.alert("Gracias por su compra, vuelva pronto.")
+}
+
+function askAction(action, name) {
+    if (window.confirm(`Do you want to ${name} any flight`)) {
+        action();
     } else {
         return;
     }
 }
 
-
-function userInterface() {
-    let maximun = window.prompt("Maximun price: ");
-    let minimun = window.prompt("Minimum price: ");
-    let flightsMach = flights.filter(function (temp) { return temp.cost < maximun })
-    flightsMach = flightsMach.filter(function (temp) { return temp.cost >= minimun })
-    allFlights(flightsMach);
-    let buyFlight = window.prompt("Select flight ID you want to buy: ")
-    window.alert("Gracias por su compra, vuelva pronto.")
-
+function repeateAction(repeatedAction, repeatedName) {
+    if (window.confirm(`Do you want to ${repeatedName} another flight`)) {
+        return repeatedAction();
+    } else {
+        return false;
+    }
 }
-
-
-
-
