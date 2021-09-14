@@ -26,7 +26,6 @@ let flights = [
 
     { id: 10, to: 'Tel-Aviv', from: 'Madrid', cost: 150, scale: false }];
 
-// Global variable. User type.
 
 // Function. MAIN.
 mainFlightsPro = flightsArray => { // Takes an array with flights as input, whichi is then pased as input of the other functions. The array has to be inputed
@@ -39,7 +38,16 @@ mainFlightsPro = flightsArray => { // Takes an array with flights as input, whic
   }
   
   // Function. Greate user
-  greateUser = () => alert(`Hello, ${prompt("User name: ")}.`); // Alert window with a prompt user name nested insidee. Called in MAIN
+  greateUser = () => {
+    let user = prompt("User name: ");
+    if (user === null || user === ""){
+      user = "Guest";
+      alert(`Hello, ${user}`)
+    } else {
+      alert(`Hello, ${user}`)
+    }
+  }
+
   
   // Function. Print all available flights
   allFlights = flightsArray => { // Flight array as input. Called IN MAIN
@@ -104,7 +112,8 @@ mainFlightsPro = flightsArray => { // Takes an array with flights as input, whic
   }
   // Function. Stablish path to add, delete or finish
   adminInterface = flightsArray => { // Flight array as input. Called by interfaceOptions.
-    let action = actionType (); // Call action type and save in local variable
+    let action = actionType (); 
+    // Call action type and save in local variable
     if (action === false) { // If "cancell" button was clicked, finish the program
       alert("Finishing program.");
       return;
@@ -141,6 +150,7 @@ mainFlightsPro = flightsArray => { // Takes an array with flights as input, whic
     } else {
       flightsArray.push(askData(flightsArray)); // If there is space for more flights, call the askData function.
     }
+    allFlights(flightsArray);     
     return flightsArray;
   }
   
@@ -150,12 +160,12 @@ mainFlightsPro = flightsArray => { // Takes an array with flights as input, whic
   
   // Function. Overrrides original flights array with a new array that filteres out the selected ID
   askRemove = (flightsArray) => { // Flights array as input. Called by deleteFlight,
-    allFlights(flightsArray); // Calls the allFlights function to print all the existing flights
     let idDelete = parseInt(window.prompt("Delete ID:")); // Ask for the id of the flight to be deleted and save in local var
     for (let i = 0; i < flightsArray.length; i++) { // Intinerate trought the id's of the flights in array
       if (idDelete === flightsArray[i].id) { // If match with id, procede to delete
         flightsArray = flightsArray.filter(function (filterFunction) { return filterFunction.id != idDelete; }); // use the filter propety to create a new array with the elements that different
-        alert('Flight successfully deleted') //                                                                     from idDelete var. Then overrride this new array on fligtsArray.
+        allFlights(flightsArray);
+        alert('Flight successfully deleted'); //                                                                     from idDelete var. Then overrride this new array on fligtsArray.
         return flightsArray; // Return flught array after deletion was completed
       }
     }
